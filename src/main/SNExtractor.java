@@ -30,12 +30,14 @@ public class SNExtractor {
 		pipeline = new StanfordCoreNLP(props);
 	}
 
-	public void extract_SN_Grams(String text, int maxN) {
+	public List<List<String>> extract_SN_Grams(String text, int nGramSize) {
 		// create an empty Annotation, run annotator and extract sentences
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
+		List<List<String>> ngrams = new ArrayList<List<String>>();
+		
 		// Iterate over all sentences and get the SN grams from the dependency
 		// graph.
 		for (CoreMap sentence : sentences) {
@@ -61,28 +63,20 @@ public class SNExtractor {
 
 			// We have all paths, now chop them into appropriate n-grams.
 			// Map N = 2 -> [[aux, sub], [sub, npos], ...]
-			HashMap<Integer, List<List<String>>> ngrams = generateNgrams(maxN, relationPaths);
-			
-
-			System.out.println(ngrams.toString());
-			// return ngrams;
+			ngrams.addAll(generateNgrams(nGramSize, relationPaths));			
 		}
+		return ngrams;
 	}
 	
-	private HashMap<Integer, List<List<String>>> generateNgrams(int maxN, Set<ArrayList<String>> relationPaths)
+	private List<List<String>> generateNgrams(int length, Set<ArrayList<String>> relationPaths)
 	{
-		HashMap<Integer, List<List<String>>> ngrams = new HashMap<Integer, List<List<String>>>(); 
-		for (int i = 2; i <= maxN; ++i) {
-			for (ArrayList<String> path : relationPaths) {
-				List<List<String>> subsequences = getSubsequences(path, i);
-				if (ngrams.get(i) == null) {
-					ngrams.put(i, subsequences);
-				} else {
-					List<List<String>> concatenatedSubsequences = new ArrayList<List<String>>();
-					concatenatedSubsequences.addAll(ngrams.get(i));
-					concatenatedSubsequences.addAll(subsequences);
-					ngrams.put(i, concatenatedSubsequences);
-				}
+		List<List<String>> ngrams = new ArrayList<List<String>>(); 
+		for (ArrayList<String> path : relationPaths) {
+			List<List<String>> subsequences = getSubsequences(path, length);
+			if (ngrams.isEmpty()) {
+				ngrams = subsequences;
+			} else {
+				ngrams.addAll(subsequences);
 			}
 		}
 		return ngrams;
