@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/ejml-0.23.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/ejml-0.23-src.zip"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/javax.json.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/javax.json-api-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/joda-time.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/joda-time-2.1-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/jollyday.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/jollyday-0.4.7-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/protobuf.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-models.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-parser.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-parser-3.5.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-parser-3.5.2-models.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-parser-3.5.2-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-postagger.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-postagger-3.5.2.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-postagger-3.5.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-postagger-3.5.2-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/xom.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/xom-1.2.10-src.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
