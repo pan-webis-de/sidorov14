@@ -1,6 +1,8 @@
 package main;
 
 import java.io.IOException;
+import java.util.List;
+import weka.core.Instances;
 
 public class Attributor {
 
@@ -8,7 +10,8 @@ public class Attributor {
 	{
 		System.out.println(args);
 		SNExtractor extractor = new SNExtractor();
-		extractor.extract_SN_Grams("I can, even now, remember the hour from which I dedicated myself to this great enterprise.", 3);
+		List<List<String>> ngrams = extractor.extract_SN_Grams("I can, even now, remember the hour from which I dedicated myself to this great enterprise.", 3);
 		
+		System.out.println(FeatureMapper.numericalizeNGrams(ngrams));
 	}
 }
