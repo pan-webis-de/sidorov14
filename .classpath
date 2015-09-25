@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/jollyday.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/jollyday-0.4.7-sources.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/protobuf.jar"/>
-	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2.jar" sourcepath="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-sources.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-javadoc.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-models.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-corenlp-3.5.2-sources.jar"/>
@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/stanford-postagger-3.5.2-sources.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/xom.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/xom-1.2.10-src.jar"/>
-	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/weka.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/weka.jar" sourcepath="/home/marvin/Programme/Authorship/sidorov14/lib/weka-src.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/weka-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

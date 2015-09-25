@@ -1,11 +1,14 @@
 package main;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -25,10 +28,35 @@ public class SNExtractor {
 		// creates a StanfordCoreNLP object, with POS tagging, lemmatization,
 		// NER, parsing, and coreference resolution
 		props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+		// props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+		props.setProperty("annotators", "tokenize, ssplit, parse");
 		pipeline = new StanfordCoreNLP(props);
 	}
 
+	public void parseFiles(Collection<File> paths)
+	{
+		try {
+			pipeline.processFiles(paths, 4);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+	
+	public List<List<String>> processFile(String filePath, int nGramSize)
+	{
+		// Load entire file into a string
+		String fileContent = "";
+		try {
+			fileContent = IOUtils.slurpFile(filePath, pipeline.getEncoding());
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		// extract sn grams
+		return extract_SN_Grams(fileContent, nGramSize);
+	}
+	
 	public List<List<String>> extract_SN_Grams(String text, int nGramSize) {
 		// create an empty Annotation, run annotator and extract sentences
 		Annotation document = new Annotation(text);
@@ -85,6 +113,7 @@ public class SNExtractor {
 	{
 		Set<ArrayList<String>> relationPaths = new ArraySet<ArrayList<String>>();
 
+		// TODO: Check if paths are in correct order root->leaf and not vice versa.
 		for (IndexedWord root : rootNodes) {
 			Set<IndexedWord> leaves = dependencies.getLeafVertices();
 
