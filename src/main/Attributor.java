@@ -40,14 +40,14 @@ public class Attributor {
 			
 			List<List<String>> two_grams = extractor.extract_SN_Grams(
 					"I can, even now, remember the hour from which I dedicated myself to this great enterprise.", 2);
-			int[][] numeric2Grams = FeatureMapper.numericalizeNGrams(two_grams);
+			List<List<Integer>> numeric2Grams = FeatureMapper.numericalizeNGrams(two_grams);
 			
 			List<List<String>> three_grams = extractor.extract_SN_Grams(
 					"I can, even now, remember the hour from which I dedicated myself to this great enterprise.", 3);
-			int[][] numeric3Grams = FeatureMapper.numericalizeNGrams(three_grams);
+			List<List<Integer>> numeric3Grams = FeatureMapper.numericalizeNGrams(three_grams);
 
-			System.out.println(Arrays.deepToString(numeric2Grams));
-			System.out.println(Arrays.deepToString(numeric3Grams));
+			System.out.println(numeric2Grams);
+			System.out.println(numeric3Grams);
 
 			String[] options = new String[1];
 			options[0] = "-U"; // unpruned tree
@@ -58,6 +58,9 @@ public class Attributor {
 				e.printStackTrace();
 			}
 			// tree.buildClassifier(data); // build classifier
+		}
+		
+		if (args[0].equals("MISC")) {
 		}
 	}
 	
@@ -84,17 +87,22 @@ public class Attributor {
 		
 		System.out.println("Found " + files.size() + " files.");
 		
+		File outputDir = new File("Corpus/Processed/");
+		
 		for (Path file : files) {
 			if (file.toFile().isFile() && (file.toFile().getName().endsWith("txt") || file.toFile().getName().endsWith("TXT")))
 			{
 				System.out.println("Processing file " + file);
 				// Get Ngrams
+				// TODO: Parallelize this step
 				List<List<String>> ngrams = extractor.processFile(file.toFile().getAbsolutePath(), NGramLength);
-				int[][] numericNGrams = FeatureMapper.numericalizeNGrams(ngrams);
+				List<List<Integer>> numericNGrams = FeatureMapper.numericalizeNGrams(ngrams);
 				
-				// TODO Write [filename_Xgrams].txt containing numeric ngrams
-				HashMap<int[], Integer> profile = FeatureMapper.createProfile(numericNGrams);
-				System.out.println(profile.toString());
+				HashMap<List<Integer>, Integer> profile = FeatureMapper.createProfile(numericNGrams);
+				
+				System.out.println("Got " + profile.size() + " sn-grams.");
+				ProfileWriter.writeProfile(file.toFile(), outputDir, profile);
+				System.out.println("Wrote profile.");
 			}
 			else
 			{
@@ -102,7 +110,7 @@ public class Attributor {
 			}
 		}
 		
-		// TODO Write full translation table
+		ProfileWriter.writeTranslationTable(FeatureMapper.getTranslationTable(), outputDir);
 	}
 	
 }

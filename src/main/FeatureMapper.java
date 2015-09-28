@@ -12,28 +12,27 @@ public class FeatureMapper {
 		return translationTable;
 	}
 	
-	static public int[][] numericalizeNGrams(List<List<String>> ngrams)
+	static public List<List<Integer>> numericalizeNGrams(List<List<String>> ngrams)
 	{
 		int nextID = 1;
 		
-		int[][] numericNGrams = new int[ngrams.size()][];
+		List<List<Integer>> numericNGrams = new ArrayList<List<Integer>>();
 		int currentNgram = 0;
 		
 		for (List<String> ngram : ngrams)
 		{
-			int[] transformedNGram = new int[ngram.size()];
+			List<Integer> transformedNGram = new ArrayList<Integer>();
 			int currentTag = 0;
 			for (String tag : ngram)
 			{
 				if (translationTable.get(tag) == null) {
 					translationTable.put(tag, nextID);
-					transformedNGram[currentTag++] = nextID;
-					++nextID;
+					transformedNGram.add(nextID++);
 				} else {
-					transformedNGram[currentTag++] = translationTable.get(tag);
+					transformedNGram.add(translationTable.get(tag));
 				}
 			}
-			numericNGrams[currentNgram++] = transformedNGram;
+			numericNGrams.add(transformedNGram);
 		}
 		
 		return numericNGrams;
