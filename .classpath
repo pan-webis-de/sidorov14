@@ -30,5 +30,6 @@
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/commons-io-2.4/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/commons-io-2.4/commons-io-2.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/commons-io-2.4/commons-io-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="/home/marvin/Programme/Authorship/sidorov14/lib/libsvm-3.20/java/libsvm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

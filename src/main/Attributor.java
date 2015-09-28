@@ -21,10 +21,11 @@ public class Attributor {
 	public static void main(String[] args) throws IOException {
 
 		if (args.length == 0) {
-			System.out.println("Usage: FILE [NgramSize] [FileLocation]");
-			System.out.println("       CORP [NgramSize] [CorpusLocation]");
-			System.out.println("       TEST [NgramSize]");
-			System.out.println("       PREP [AuthorFolder] [SeenNgramFile] [AuthorName]");
+			System.out.println("Usage: FILE  [NgramSize] [FileLocation]");
+			System.out.println("       CORP  [NgramSize] [CorpusLocation]");
+			System.out.println("       TEST  [NgramSize]");
+			System.out.println("       PREP  [ProfileFolders]");
+			System.out.println("       LEARN [TrainingData] [AuthorName]");
 			System.exit(0);
 		}
 		
@@ -38,9 +39,25 @@ public class Attributor {
 			processCorpus(args);
 		}
 		
+		if (args[0].equals("LEARN")) {
+			Learner l = new Learner();
+			try {
+				l.train(args[1], args[2]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		if (args[0].equals("PREP")) {
+			/*SVMPreprocessor s = new SVMPreprocessor();
+			File authorProfilesLocation = new File(args[1]);
+			File resultTargetFolder = new File(authorProfilesLocation.getParent());
+			File seenNgramFile = new File(args[2]);
+			String authorName = authorProfilesLocation.getName();
+			s.generateAuthorVectorFile(authorProfilesLocation, resultTargetFolder, seenNgramFile, authorName);*/
 			SVMPreprocessor s = new SVMPreprocessor();
-			s.generateAuthorVectorFile(new File(args[1]), new File(args[2]), args[3]);
+			File authorProfilesLocation = new File(args[1]);
+			s.genAllAuthorVectors(authorProfilesLocation);
 		}
 
 		if (args[0].equals("TEST")) {
