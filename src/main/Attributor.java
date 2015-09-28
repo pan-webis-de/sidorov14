@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import weka.classifiers.trees.J48;
@@ -22,6 +24,7 @@ public class Attributor {
 			System.out.println("Usage: FILE [NgramSize] [FileLocation]");
 			System.out.println("       CORP [NgramSize] [CorpusLocation]");
 			System.out.println("       TEST [NgramSize]");
+			System.out.println("       PREP [AuthorFolder] [SeenNgramFile] [AuthorName]");
 			System.exit(0);
 		}
 		
@@ -33,6 +36,11 @@ public class Attributor {
 		
 		if (args[0].equals("CORP")) {
 			processCorpus(args);
+		}
+		
+		if (args[0].equals("PREP")) {
+			SVMPreprocessor s = new SVMPreprocessor();
+			s.generateAuthorVectorFile(new File(args[1]), new File(args[2]), args[3]);
 		}
 
 		if (args[0].equals("TEST")) {
@@ -89,16 +97,24 @@ public class Attributor {
 		
 		File outputDir = new File("Corpus/Processed/");
 		
+		// Set to store all seen ngrams in
+		Set<List<Integer>> uniqueNgrams = new HashSet<List<Integer>>();
+		
 		for (Path file : files) {
 			if (file.toFile().isFile() && (file.toFile().getName().endsWith("txt") || file.toFile().getName().endsWith("TXT")))
 			{
 				System.out.println("Processing file " + file);
 				// Get Ngrams
-				// TODO: Parallelize this step
 				List<List<String>> ngrams = extractor.processFile(file.toFile().getAbsolutePath(), NGramLength);
 				List<List<Integer>> numericNGrams = FeatureMapper.numericalizeNGrams(ngrams);
 				
 				HashMap<List<Integer>, Integer> profile = FeatureMapper.createProfile(numericNGrams);
+				
+				// Store the seen ngrams
+				for (List<Integer> seenNgram : profile.keySet())
+				{
+					uniqueNgrams.add(seenNgram);
+				}
 				
 				System.out.println("Got " + profile.size() + " sn-grams.");
 				ProfileWriter.writeProfile(file.toFile(), outputDir, profile);
@@ -111,6 +127,7 @@ public class Attributor {
 		}
 		
 		ProfileWriter.writeTranslationTable(FeatureMapper.getTranslationTable(), outputDir);
+		ProfileWriter.writeSeenUniqueNGrams(uniqueNgrams, outputDir);
 	}
 	
 }

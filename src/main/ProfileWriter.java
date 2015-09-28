@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,13 +31,14 @@ public class ProfileWriter {
 		String fileNameWithOutExt = FilenameUtils.removeExtension(file.getName());
 
 		// Use regex to get author and text number
-		Pattern authorPattern = Pattern.compile("([0-9]*[A-Z]train)([A-Z]*)([0-9]*)");
+		Pattern authorPattern = Pattern.compile("([0-9]*[A-Z]?train)([A-Z]*)([0-9]*)");
 		Matcher authorMatcher = authorPattern.matcher(fileNameWithOutExt);
 		if (authorMatcher.find()) {
 			// Group 0 is whole string, 1 an irrelevant part, 2 is the author, 3
 			// the number of the text
 			return authorMatcher.group(2);
 		} else {
+			System.err.println("Could not extract author from file " + file.toString());
 			return "";
 		}
 	}
@@ -63,7 +65,7 @@ public class ProfileWriter {
 
 				String ngramString = ngram.toString();
 
-				writer.write(ngramString.substring(1, ngramString.length() - 1) + ", " + ngramCount + "\n");
+				writer.write("[" + ngramString.substring(1, ngramString.length() - 1) + "] -> " + ngramCount + "\n");
 			}
 		} catch (IOException ex) {
 			System.err.println("Failed to write profile for " + filename);
@@ -92,6 +94,25 @@ public class ProfileWriter {
 			} catch (Exception ex) {
 				/* ignore */}
 		}
-
+	}
+	
+	static public void writeSeenUniqueNGrams(Set<List<Integer>> seenNgrams, File targetDir)
+	{
+		File tableFile = new File(targetDir, "seenNGrams");
+		
+		Writer writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tableFile), "utf-8"));
+			for (List<Integer> entry : seenNgrams) {
+				writer.write(entry.toString() + "\n");
+			}
+		} catch (IOException ex) {
+			System.err.println("Failed to write seen ngrams.");
+		} finally {
+			try {
+				writer.close();
+			} catch (Exception ex) {
+				/* ignore */}
+		}
 	}
 }
