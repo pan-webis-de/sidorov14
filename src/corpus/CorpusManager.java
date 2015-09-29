@@ -15,6 +15,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import util.Utilities;
+
 public class CorpusManager implements ICorpusManager {
 	private Path corpusLocation;
 	private String metaFileName = "meta-file.json";
@@ -23,6 +25,7 @@ public class CorpusManager implements ICorpusManager {
 	private String unknownFolder;
 	private String language;
 	private List<String> authors;
+	private List<File> knownTexts;
 	private List<File> unknownTexts;
 
 	public CorpusManager(String location) throws IOException {
@@ -48,10 +51,6 @@ public class CorpusManager implements ICorpusManager {
 
 			metadata = metaReader.readObject();
 			groundData = groundReader.readObject();
-			/*JsonArray results = obj.getJsonArray("candidate-authors");
-			for (JsonObject result : results.getValuesAs(JsonObject.class)) {
-				System.out.print(result.toString());
-			}*/
 		}
 		catch (Exception e) {
 			throw new IOException("Failed to read JSON: " + e.getMessage());
@@ -73,13 +72,37 @@ public class CorpusManager implements ICorpusManager {
 			unknownTexts.add(new File(unknownFolder, text.getString("unknown-text")));
 		}
 		
+		discoverKnownTexts();
+		
 		System.out.println(encoding);
 		System.out.println(unknownFolder);
 		System.out.println(language);
 		System.out.println(authors);
 		System.out.println(unknownTexts);
+		System.out.println(knownTexts);
 	}
 
+	private void discoverKnownTexts() {
+		assert(authors.size() > 0);
+		
+		for (String author : authors)
+		{
+			File authorFolder = new File(corpusLocation.toFile(), author);
+			if ((!authorFolder.exists()) || (!authorFolder.isDirectory()))
+			{
+				System.err.println("Could not open folder " + authorFolder + ", skipping.");
+				continue;
+			}
+			
+			List<Path> texts = Utilities.getDirectoryContents(authorFolder);
+			knownTexts = new ArrayList<File>();
+			for (Path text : texts)
+			{
+				knownTexts.add(text.toFile());
+			}
+		}
+	}
+	
 	@Override
 	public TextInstance getNextText() {
 		// TODO Auto-generated method stub
@@ -95,7 +118,7 @@ public class CorpusManager implements ICorpusManager {
 	@Override
 	public List<String> getAllAuthors() {
 		// TODO Auto-generated method stub
-		return null;
+		return authors;
 	}
 
 	@Override

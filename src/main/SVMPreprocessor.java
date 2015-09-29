@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import util.Utilities;
+
 public class SVMPreprocessor {
 	/**
 	 * Take a string containing an ngram in the format "[1, 2, 3]" and returns a list
@@ -215,17 +217,6 @@ public class SVMPreprocessor {
 	}
 
 	private ArrayList<Path> getDirectoryContents(File authorFolder) {
-		ArrayList<Path> files = new ArrayList<Path>();
-		try {
-			Iterator<Path> fileIter = Files.list(authorFolder.toPath()).iterator();
-			while (fileIter.hasNext())
-			{
-				files.add(fileIter.next());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		return files;
+		return Utilities.getDirectoryContents(authorFolder);
 	}
 }
