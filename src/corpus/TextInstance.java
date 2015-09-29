@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -21,7 +22,7 @@ public class TextInstance {
 	}
 	
 	public String getFullText() throws FileNotFoundException, IOException {
-		List<String> fileContents = IOUtils.readLines(new FileInputStream(textSource));
+		List<String> fileContents = Files.readAllLines(textSource.toPath());
 		StringBuilder fullFile = new StringBuilder();
 		for (String line : fileContents)
 		{
