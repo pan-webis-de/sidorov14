@@ -1,19 +1,17 @@
 package corpus;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonValue;
 
 import util.Utilities;
 
@@ -25,8 +23,10 @@ public class CorpusManager implements ICorpusManager {
 	private String unknownFolder;
 	private String language;
 	private List<String> authors;
-	private List<File> knownTexts;
+	private List<TextInstance> knownTexts;
 	private List<File> unknownTexts;
+	
+	private Iterator<TextInstance> knownTextIterator;
 
 	public CorpusManager(String location) throws IOException {
 		corpusLocation = new File(location).toPath();
@@ -74,12 +74,7 @@ public class CorpusManager implements ICorpusManager {
 		
 		discoverKnownTexts();
 		
-		System.out.println(encoding);
-		System.out.println(unknownFolder);
-		System.out.println(language);
-		System.out.println(authors);
-		System.out.println(unknownTexts);
-		System.out.println(knownTexts);
+		knownTextIterator = knownTexts.iterator();
 	}
 
 	private void discoverKnownTexts() {
@@ -95,18 +90,33 @@ public class CorpusManager implements ICorpusManager {
 			}
 			
 			List<Path> texts = Utilities.getDirectoryContents(authorFolder);
-			knownTexts = new ArrayList<File>();
+			knownTexts = new ArrayList<TextInstance>();
 			for (Path text : texts)
 			{
-				knownTexts.add(text.toFile());
+				if (text.toFile().exists())
+				{
+					TextInstance instance = new TextInstance(author, text.toFile());
+					knownTexts.add(instance);
+				}
+				else
+				{
+					System.err.println("Could not locate file " + text.toString() + ", skipping.");
+					continue;
+				}
 			}
 		}
 	}
 	
 	@Override
 	public TextInstance getNextText() {
-		// TODO Auto-generated method stub
-		return null;
+		if (knownTextIterator.hasNext())
+		{
+			return knownTextIterator.next();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	@Override
@@ -117,14 +127,12 @@ public class CorpusManager implements ICorpusManager {
 
 	@Override
 	public List<String> getAllAuthors() {
-		// TODO Auto-generated method stub
 		return authors;
 	}
 
 	@Override
 	public int getTextCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return knownTexts.size();
 	}
 
 	public static void main(String[] args) {
