@@ -138,6 +138,10 @@ public class CorpusManager implements ICorpusManager {
 	public static void main(String[] args) {
 		try {
 			CorpusManager c = new CorpusManager("Corpus/NEW CORPORA/C10/");
+			TextInstance i = c.getNextText();
+			System.out.println(i.getTrueAuthor());
+			System.out.println(i.getTextSource());
+			System.out.println(i.getFullText());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
