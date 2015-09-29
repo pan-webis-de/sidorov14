@@ -34,5 +34,7 @@ public class Learner {
         //initialize svm classifier
         LibSVM svm = new LibSVM();
         svm.buildClassifier(data);
+        
+        // svm.classifyInstance(instance);
 	}
 }
