@@ -74,8 +74,8 @@ public class CorpusManager implements ICorpusManager {
 			unknownTexts.add(new File(unknownFolder, text.getString("unknown-text")));
 		}
 		
+		knownTexts = new ArrayList<TextInstance>();
 		discoverKnownTexts();
-		
 		knownTextIterator = knownTexts.iterator();
 		
 		authorTextMapping = new HashMap<File, String>();
@@ -98,7 +98,6 @@ public class CorpusManager implements ICorpusManager {
 			}
 			
 			List<Path> texts = Utilities.getDirectoryContents(authorFolder);
-			knownTexts = new ArrayList<TextInstance>();
 			for (Path text : texts)
 			{
 				if (text.toFile().exists())
