@@ -10,7 +10,7 @@ import weka.core.converters.CSVLoader;
 import weka.core.converters.ConverterUtils.DataSource;
 
 public class Learner {
-	public void train (String authorProfiles, String authorName) throws Exception
+	public void train (String authorProfiles) throws Exception
 	{
 		CSVLoader loader = new CSVLoader();
 		String[] options = new String[1];

@@ -103,17 +103,17 @@ public class SVMPreprocessor {
 		} catch (IOException e2) {
 			System.exit(-1);
 		}
+		StringJoiner headerEntries = new StringJoiner(",");
 		for (int i = 0; i < seenNgrams.size(); ++i) {
-			try {
-				vectorWriter.write("Column" + i + ", ");
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.err.println("Failed to write headers");
-				System.exit(-1);
-			}
+			headerEntries.add("Column" + i);
+		}		
+		try {
+			vectorWriter.write(headerEntries.toString() + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Failed to write headers");
+			System.exit(-1);
 		}
-		
-		vectorWriter.write("\n");
 
 		// List all folders. Assume the folder name is the author and the
 		// contents are profiles
@@ -150,108 +150,6 @@ public class SVMPreprocessor {
 			vectors.add(profileVector);
 		}
 		return vectors;
-	}
-
-	/************************************************/ 
-	
-	public void genAllAuthorVectors(File allAuthorLocation) {
-		// List all folders. Assume the folder name is the author and the
-		// contents are profiles
-		ArrayList<Path> files = getDirectoryContents(allAuthorLocation);
-
-		File seenNgramFile = new File(allAuthorLocation, "seenNGrams");
-
-		for (Path path : files) {
-			if (path.toFile().isDirectory()) {
-				generateAuthorVectorFile(path.toFile(), allAuthorLocation, seenNgramFile, path.toFile().getName());
-			}
-		}
-	}
-
-	public void generateAuthorVectorFile(File authorFolder, File vectorFileFolder, File seenNgramFile,
-			String authorName) {
-		// Get author files
-		ArrayList<Path> files = getDirectoryContents(authorFolder);
-
-		System.out.println("Transforming " + files.size() + " files by author " + authorName);
-
-		Set<List<Integer>> seenNgrams = null;
-		try {
-			seenNgrams = getSeenNgrams(seenNgramFile);
-		} catch (IOException e1) {
-			System.err.println("Could not read seen ngram file");
-			e1.printStackTrace();
-			System.exit(-1);
-		}
-
-		// Open file for all resulting vectors
-		File vectorFile = new File(vectorFileFolder, authorName + "_profileVectors.txt");
-
-		Writer vectorWriter = null;
-		try {
-			vectorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vectorFile), "utf-8"));
-		} catch (Exception ex) {
-			System.err.println("Failed to open vector file for author " + authorName);
-			System.exit(-1);
-		}
-
-		// write headers
-		try {
-			vectorWriter.write("Class, ");
-		} catch (IOException e2) {
-			System.exit(-1);
-		}
-		for (int i = 0; i < seenNgrams.size(); ++i) {
-			try {
-				vectorWriter.write("Column" + i + ", ");
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.err.println("Failed to write headers");
-				System.exit(-1);
-			}
-		}
-
-		try {
-			vectorWriter.write("\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("Failed to write header newline");
-			System.exit(-1);
-		}
-
-		// Read each author file
-		for (Path fileToRead : files) {
-			// build hash map to count ngrams into
-			HashMap<List<Integer>, Integer> profileVector = computeProfileVector(seenNgrams, fileToRead);
-
-			// Write to profile file
-			try {
-				vectorWriter.write(authorName + ", ");
-			} catch (IOException e1) {
-				System.err.println("Could not write class.");
-				System.exit(-1);
-			}
-			for (Map.Entry<List<Integer>, Integer> entry : profileVector.entrySet()) {
-				try {
-					vectorWriter.write(entry.getValue() + ", ");
-				} catch (Exception e) {
-					System.err.println("Failed to write vector file for author " + authorName);
-					System.exit(-1);
-				}
-			}
-
-			try {
-				vectorWriter.write("\n");
-			} catch (IOException e) {
-				System.err.println("Failed to terminate vector with newline for author " + authorName);
-				System.exit(-1);
-			}
-		}
-
-		try {
-			vectorWriter.close();
-		} catch (IOException e) {
-		}
 	}
 
 	private HashMap<List<Integer>, Integer> computeProfileVector(Set<List<Integer>> seenNgrams, Path fileToRead) {
