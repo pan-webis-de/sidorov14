@@ -98,8 +98,16 @@ public class ExtractionManager {
 	}
 
 	public static void main(String[] args) {
-		ExtractionManager ex = new ExtractionManager();
+		// ExtractionManager ex = new ExtractionManager();
 		// ex.processCorpus("Corpus/NEW CORPORA/C10", "Corpus/Processed", 3);
-		ex.processCorpus("Corpus/NEW CORPORA/pan12A", "Corpus/Processed", 3);
+		//ex.processCorpus("Corpus/NEW CORPORA/pan12A", "Corpus/Processed", 3);
+		
+		SVMPreprocessor prep = new SVMPreprocessor();
+		try {
+			prep.generateTrainingFile(new File("Corpus/Processed"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
