@@ -54,6 +54,24 @@ public class ExtractionManager {
 
 		ProfileWriter.writeTranslationTable(FeatureMapper.getTranslationTable(), new File(resultFolder));
 		ProfileWriter.writeSeenUniqueNGrams(uniqueNgrams, new File(resultFolder));
+		
+		// Do the same with the unknown texts
+		// TODO: Fix duplication!
+		TextInstance currentUnknownText = corpusManager.getUnknownText();
+		while (currentUnknownText != null) {
+			currentUnknownText = corpusManager.getUnknownText();
+			String unknownText = null;
+			try {
+				unknownText = currentUnknownText.getFullText();
+			} catch (IOException e) {
+				System.err.println("Could not get unknown text. Skipping " + currentUnknownText.getTextSource() + " Cause: " + e.getMessage());
+				currentUnknownText = corpusManager.getUnknownText();
+				continue;
+			}
+			processText(unknownText, ngramSize, resultFolder, currentUnknownText.getTextSource().getName(),
+					currentUnknownText.getTrueAuthor());
+			currentUnknownText = corpusManager.getUnknownText();
+		}
 	}
 
 	private void processText(String text, int ngramSize, String resultFolder, String sourceFile, String author) {
@@ -94,20 +112,6 @@ public class ExtractionManager {
 				writer.close();
 			} catch (Exception ex) {
 				/* ignore */}
-		}
-	}
-
-	public static void main(String[] args) {
-		// ExtractionManager ex = new ExtractionManager();
-		// ex.processCorpus("Corpus/NEW CORPORA/C10", "Corpus/Processed", 3);
-		//ex.processCorpus("Corpus/NEW CORPORA/pan12A", "Corpus/Processed", 3);
-		
-		SVMPreprocessor prep = new SVMPreprocessor();
-		try {
-			prep.generateTrainingFile(new File("Corpus/Processed"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

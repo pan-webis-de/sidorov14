@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import corpus.CorpusManager;
 import weka.classifiers.trees.J48;
 
 public class Attributor {
@@ -36,7 +37,9 @@ public class Attributor {
 		}
 		
 		if (args[0].equals("CORP")) {
-			processCorpus(args);
+			// processCorpus(args);
+			ExtractionManager ext = new ExtractionManager();
+			ext.processCorpus(args[2], "Corpus/Processed", Integer.parseInt(args[1]));
 		}
 		
 		if (args[0].equals("LEARN")) {
@@ -48,10 +51,21 @@ public class Attributor {
 			}
 		}
 		
+		if (args[0].equals("CLASS")) {
+			Learner l = new Learner();
+			try {
+				l.classify("Corpus/Processed/unknownVectors.txt");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		if (args[0].equals("PREP")) {
 			SVMPreprocessor s = new SVMPreprocessor();
 			File authorProfilesLocation = new File(args[1]);
 			s.generateTrainingFile(authorProfilesLocation);
+			s.generateClassificationFile(authorProfilesLocation);
 		}
 
 		if (args[0].equals("TEST")) {

@@ -25,10 +25,11 @@ public class CorpusManager implements ICorpusManager {
 	private String language;
 	private List<String> authors;
 	private List<TextInstance> knownTexts;
-	private List<File> unknownTexts;
+	private List<TextInstance> unknownTexts;
 	private HashMap<File, String> authorTextMapping;
 	
 	private Iterator<TextInstance> knownTextIterator;
+	private Iterator<TextInstance> unknownTextIterator;
 
 	public CorpusManager(String location) throws IOException {
 		corpusLocation = new File(location).toPath();
@@ -68,11 +69,9 @@ public class CorpusManager implements ICorpusManager {
 			authors.add(author.getString("author-name"));
 		}
 		
-		unknownTexts = new ArrayList<File>();
-		for(JsonObject text : metadata.getJsonArray("unknown-texts").getValuesAs(JsonObject.class))
-		{
-			unknownTexts.add(new File(unknownFolder, text.getString("unknown-text")));
-		}
+		unknownTexts = new ArrayList<TextInstance>();
+		discoverUnknownTexts();
+		unknownTextIterator = unknownTexts.iterator();
 		
 		knownTexts = new ArrayList<TextInstance>();
 		discoverKnownTexts();
@@ -111,6 +110,17 @@ public class CorpusManager implements ICorpusManager {
 					continue;
 				}
 			}
+		}
+	}
+	
+	private void discoverUnknownTexts()
+	{
+		File unknown = new File(corpusLocation.toFile(), unknownFolder);
+		List<Path> texts = Utilities.getDirectoryContents(unknown);
+		for (Path unknownText : texts)
+		{
+			TextInstance instance = new TextInstance("UNKNOWN", unknownText.toFile());
+			unknownTexts.add(instance);
 		}
 	}
 	
@@ -158,6 +168,18 @@ public class CorpusManager implements ICorpusManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public TextInstance getUnknownText() {
+		if (unknownTextIterator.hasNext())
+		{
+			return unknownTextIterator.next();
+		}
+		else
+		{
+			return null;
+		} 
 	}
 
 }

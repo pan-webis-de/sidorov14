@@ -120,7 +120,7 @@ public class SVMPreprocessor {
 		ArrayList<Path> files = getDirectoryContents(location);
 		
 		for (Path path : files) {
-			if (path.toFile().isDirectory()) {
+			if (path.toFile().isDirectory() && !path.toFile().getName().equals("UNKNOWN")) {
 				String authorName = path.toFile().getName();
 				List<HashMap<List<Integer>, Integer>> vectors = getVectorsFromAuthor(path.toFile(), seenNgrams, authorName);
 				for (HashMap<List<Integer>, Integer> vector : vectors)
@@ -179,8 +179,8 @@ public class SVMPreprocessor {
 				int count = Integer.parseInt(splitLine.get(1).trim());
 
 				if (profileVector.get(ngram) == null) {
-					System.err.println("Programming error: Ngram " + ngram.toString() + " not in seen ngrams.");
-					System.exit(-1);
+					System.err.println("Skipping: Ngram " + ngram.toString() + " not in seen ngrams.");
+					continue;
 				} else {
 					profileVector.put(ngram, profileVector.get(ngram) + count);
 				}
@@ -195,5 +195,67 @@ public class SVMPreprocessor {
 
 	private ArrayList<Path> getDirectoryContents(File authorFolder) {
 		return Utilities.getDirectoryContents(authorFolder);
+	}
+	
+	public void generateClassificationFile(File location) throws IOException {
+		// get seen ngrams
+		Set<List<Integer>> seenNgrams = null;
+		try {
+			seenNgrams = getSeenNgrams(new File(location, "seenNGrams"));
+		} catch (IOException e1) {
+			System.err.println("Could not read seen ngram file");
+			e1.printStackTrace();
+			System.exit(-1);
+		}
+
+		// Open file for all resulting vectors
+		File vectorFile = new File(location, "unknownVectors.txt");
+
+		Writer vectorWriter = null;
+		try {
+			vectorWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(vectorFile), "utf-8"));
+		} catch (Exception ex) {
+			System.err.println("Failed to open vector file");
+			System.exit(-1);
+		}
+
+		// write headers
+		try {
+			vectorWriter.write("Class, ");
+		} catch (IOException e2) {
+			System.exit(-1);
+		}
+		StringJoiner headerEntries = new StringJoiner(",");
+		for (int i = 0; i < seenNgrams.size(); ++i) {
+			headerEntries.add("Column" + i);
+		}		
+		try {
+			vectorWriter.write(headerEntries.toString() + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Failed to write headers");
+			System.exit(-1);
+		}
+
+		// List all folders. Assume the folder name is the author and the
+		// contents are profiles
+		ArrayList<Path> files = getDirectoryContents(location);
+		
+		for (Path path : files) {
+			if (path.toFile().isDirectory() && path.toFile().getName().equals("UNKNOWN")) {
+				String authorName = path.toFile().getName();
+				List<HashMap<List<Integer>, Integer>> vectors = getVectorsFromAuthor(path.toFile(), seenNgrams, "UNKNOWN");
+				for (HashMap<List<Integer>, Integer> vector : vectors)
+				{
+					StringJoiner commaSeparatedEntries = new StringJoiner(",");
+					commaSeparatedEntries.add("UNKNOWN");
+					for (Map.Entry<List<Integer>, Integer> entry : vector.entrySet()) {
+						commaSeparatedEntries.add(entry.getValue().toString());
+					}
+					vectorWriter.write(commaSeparatedEntries.toString() + "\n");
+				}
+			}
+		}
+		vectorWriter.close();
 	}
 }

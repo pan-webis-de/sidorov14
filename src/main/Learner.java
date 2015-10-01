@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import corpus.CorpusManager;
 import weka.classifiers.functions.LibSVM;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
@@ -35,6 +36,37 @@ public class Learner {
         LibSVM svm = new LibSVM();
         svm.buildClassifier(data);
         
+        weka.core.SerializationHelper.write("svm.model", svm);
+
+        
+        
         // svm.classifyInstance(instance);
+	}
+	
+	public void classify(String unknownFile) throws Exception
+	{
+		LibSVM svm = null;
+		try {
+			svm = (LibSVM) weka.core.SerializationHelper.read("svm.model");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
+		CSVLoader loader = new CSVLoader();
+		String[] options = new String[1];
+		options[0] = "-H";
+		loader.setOptions(options);
+		loader.setSource(new File(unknownFile));
+		loader.getStructure();
+	    Instances data = loader.getDataSet();
+	    
+	    if (data.classIndex() == -1)
+        	data.setClassIndex(0);
+	    
+	    for (int i = 0; i < data.numInstances(); ++i)
+	    {
+	    	System.out.println(svm.classifyInstance(data.instance(i)));
+	    }
 	}
 }
