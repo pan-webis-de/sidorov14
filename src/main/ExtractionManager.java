@@ -51,14 +51,13 @@ public class ExtractionManager {
 			currentTextInstance = corpusManager.getNextText();
 			++textCount;
 		}
-
-		ProfileWriter.writeTranslationTable(FeatureMapper.getTranslationTable(), new File(resultFolder));
-		ProfileWriter.writeSeenUniqueNGrams(uniqueNgrams, new File(resultFolder));
 		
 		// Do the same with the unknown texts
 		// TODO: Fix duplication!
+		int unknownTextCount = 1;
 		TextInstance currentUnknownText = corpusManager.getUnknownText();
 		while (currentUnknownText != null) {
+			System.out.println("Processing unknown text " + unknownTextCount + " of " + corpusManager.getUnknownTextCount());
 			currentUnknownText = corpusManager.getUnknownText();
 			String unknownText = null;
 			try {
@@ -71,7 +70,11 @@ public class ExtractionManager {
 			processText(unknownText, ngramSize, resultFolder, currentUnknownText.getTextSource().getName(),
 					currentUnknownText.getTrueAuthor());
 			currentUnknownText = corpusManager.getUnknownText();
+			++unknownTextCount;
 		}
+		
+		ProfileWriter.writeTranslationTable(FeatureMapper.getTranslationTable(), new File(resultFolder));
+		ProfileWriter.writeSeenUniqueNGrams(uniqueNgrams, new File(resultFolder));
 	}
 
 	private void processText(String text, int ngramSize, String resultFolder, String sourceFile, String author) {

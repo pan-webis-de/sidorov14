@@ -151,6 +151,18 @@ public class SVMPreprocessor {
 		}
 		return vectors;
 	}
+	
+	private HashMap<String, HashMap<List<Integer>, Integer>> getLabelledUnknownVectors(File unknownFolder, Set<List<Integer>> seenNgrams)
+	{
+		ArrayList<Path> files = getDirectoryContents(unknownFolder);
+		
+		HashMap<String, HashMap<List<Integer>, Integer>> vectors = new HashMap<String, HashMap<List<Integer>, Integer>>();
+		for (Path fileToRead : files) {
+			HashMap<List<Integer>, Integer> profileVector = computeProfileVector(seenNgrams, fileToRead);
+			vectors.put(fileToRead.toFile().getName(), profileVector);
+		}
+		return vectors;
+	}
 
 	private HashMap<List<Integer>, Integer> computeProfileVector(Set<List<Integer>> seenNgrams, Path fileToRead) {
 		HashMap<List<Integer>, Integer> profileVector = new HashMap<List<Integer>, Integer>();
@@ -244,12 +256,12 @@ public class SVMPreprocessor {
 		for (Path path : files) {
 			if (path.toFile().isDirectory() && path.toFile().getName().equals("UNKNOWN")) {
 				String authorName = path.toFile().getName();
-				List<HashMap<List<Integer>, Integer>> vectors = getVectorsFromAuthor(path.toFile(), seenNgrams, "UNKNOWN");
-				for (HashMap<List<Integer>, Integer> vector : vectors)
+				HashMap<String, HashMap<List<Integer>, Integer>> vectors = getLabelledUnknownVectors(path.toFile(), seenNgrams);
+				for (Map.Entry<String, HashMap<List<Integer>, Integer>> vector : vectors.entrySet())
 				{
 					StringJoiner commaSeparatedEntries = new StringJoiner(",");
-					commaSeparatedEntries.add("UNKNOWN");
-					for (Map.Entry<List<Integer>, Integer> entry : vector.entrySet()) {
+					commaSeparatedEntries.add(vector.getKey());
+					for (Map.Entry<List<Integer>, Integer> entry : vector.getValue().entrySet()) {
 						commaSeparatedEntries.add(entry.getValue().toString());
 					}
 					vectorWriter.write(commaSeparatedEntries.toString() + "\n");

@@ -119,7 +119,7 @@ public class CorpusManager implements ICorpusManager {
 		List<Path> texts = Utilities.getDirectoryContents(unknown);
 		for (Path unknownText : texts)
 		{
-			TextInstance instance = new TextInstance("UNKNOWN", unknownText.toFile());
+			TextInstance instance = new TextInstance(unknownText.toFile().getName(), unknownText.toFile());
 			unknownTexts.add(instance);
 		}
 	}
@@ -180,6 +180,11 @@ public class CorpusManager implements ICorpusManager {
 		{
 			return null;
 		} 
+	}
+
+	@Override
+	public int getUnknownTextCount() {
+		return unknownTexts.size();
 	}
 
 }
