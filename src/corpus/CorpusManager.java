@@ -26,7 +26,7 @@ public class CorpusManager implements ICorpusManager {
 	private List<String> authors;
 	private List<TextInstance> knownTexts;
 	private List<TextInstance> unknownTexts;
-	private HashMap<File, String> authorTextMapping;
+	private HashMap<String, String> authorTextMapping;
 	
 	private Iterator<TextInstance> knownTextIterator;
 	private Iterator<TextInstance> unknownTextIterator;
@@ -77,10 +77,10 @@ public class CorpusManager implements ICorpusManager {
 		discoverKnownTexts();
 		knownTextIterator = knownTexts.iterator();
 		
-		authorTextMapping = new HashMap<File, String>();
+		authorTextMapping = new HashMap<String, String>();
 		for (JsonObject truth : groundData.getJsonArray("ground-truth").getValuesAs(JsonObject.class))
 		{
-			authorTextMapping.put(new File(unknownFolder, truth.getString("unknown-text")), truth.getString("true-author"));
+			authorTextMapping.put(truth.getString("unknown-text"), truth.getString("true-author"));
 		}
 	}
 
@@ -186,5 +186,8 @@ public class CorpusManager implements ICorpusManager {
 	public int getUnknownTextCount() {
 		return unknownTexts.size();
 	}
-
+	
+	public HashMap<String, String> getAuthorTextMapping() {
+		return authorTextMapping;
+	}
 }

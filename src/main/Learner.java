@@ -46,10 +46,21 @@ public class Learner {
         weka.core.SerializationHelper.write("svm.model", svm);
         weka.core.SerializationHelper.write("j48.model", tree);
         
-        Evaluation eval = new Evaluation(testSet);
-        eval.crossValidateModel(tree, testSet, 10, new Random(1));
+        /*Evaluation eval = new Evaluation(trainSet);
+        eval.crossValidateModel(svm, trainSet, 2, new Random(1));
         System.out.println(eval.toSummaryString("\nResults\n\n", false));
+        eval.crossValidateModel(tree, trainSet, 2, new Random(1));
+        System.out.println(eval.toSummaryString("\nResults\n\n", false));*/
 
+        CorpusManager cm = new CorpusManager("Corpus/NEW CORPORA/pan12B/");
+        
+        for (int i = 0; i < testSet.numInstances(); ++i)
+	    {
+	    	double prediction = svm.classifyInstance(testSet.instance(i));
+	    	String predictedAuthor = trainSet.classAttribute().value((int) prediction);
+	    	String classifiedText = testSet.instance(i).stringValue(0);
+	    	System.out.println(classifiedText + " -> " + predictedAuthor + " (is " + cm.getAuthorTextMapping().get(classifiedText + ".txt") + ")");
+	    }
         
         // svm.classifyInstance(instance);
 	}
