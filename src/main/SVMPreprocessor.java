@@ -159,7 +159,7 @@ public class SVMPreprocessor {
 		HashMap<String, HashMap<List<Integer>, Integer>> vectors = new HashMap<String, HashMap<List<Integer>, Integer>>();
 		for (Path fileToRead : files) {
 			HashMap<List<Integer>, Integer> profileVector = computeProfileVector(seenNgrams, fileToRead);
-			vectors.put(fileToRead.toFile().getName(), profileVector);
+			vectors.put(fileToRead.toFile().getName().split(".txt")[0], profileVector);
 		}
 		return vectors;
 	}

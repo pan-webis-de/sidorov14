@@ -58,7 +58,6 @@ public class ExtractionManager {
 		TextInstance currentUnknownText = corpusManager.getUnknownText();
 		while (currentUnknownText != null) {
 			System.out.println("Processing unknown text " + unknownTextCount + " of " + corpusManager.getUnknownTextCount());
-			currentUnknownText = corpusManager.getUnknownText();
 			String unknownText = null;
 			try {
 				unknownText = currentUnknownText.getFullText();
@@ -68,7 +67,7 @@ public class ExtractionManager {
 				continue;
 			}
 			processText(unknownText, ngramSize, resultFolder, currentUnknownText.getTextSource().getName(),
-					currentUnknownText.getTrueAuthor());
+					"UNKNOWN");
 			currentUnknownText = corpusManager.getUnknownText();
 			++unknownTextCount;
 		}
@@ -93,7 +92,7 @@ public class ExtractionManager {
 			String author) {
 		File authorFolder = new File(resultFolder, author);
 		authorFolder.mkdirs();
-		File profileFile = new File(authorFolder, (sourceFile + "_profile"));
+		File profileFile = new File(authorFolder, sourceFile);
 
 		Writer writer = null;
 		try {
@@ -114,7 +113,8 @@ public class ExtractionManager {
 			try {
 				writer.close();
 			} catch (Exception ex) {
-				/* ignore */}
+				System.err.println("Failed to close file " + sourceFile);
+				}
 		}
 	}
 }

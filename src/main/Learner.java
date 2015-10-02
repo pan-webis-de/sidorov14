@@ -3,9 +3,12 @@ package main;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import corpus.CorpusManager;
+import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LibSVM;
+import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -13,32 +16,40 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class Learner {
 	public void train (String authorProfiles) throws Exception
 	{
-		CSVLoader loader = new CSVLoader();
-		String[] options = new String[1];
-		options[0] = "-H";
-		loader.setOptions(options);
-		loader.setSource(new File(authorProfiles));
-		loader.getStructure();
-	    Instances data = loader.getDataSet();
-	    
-	    System.out.println(data.attribute(0));
-	    
-		/*DataSource source = new DataSource(loader);
-        System.out.println(source.getStructure());
-        Instances data = source.getDataSet();*/
+		CSVLoader trainLoader = new CSVLoader();
+		trainLoader.setSource(new File(authorProfiles));
+		trainLoader.getStructure();
+	    Instances trainSet = trainLoader.getDataSet();
 
         // setting class attribute if the data format does not provide this information
         // For example, the XRFF format saves the class attribute information as well
-        if (data.classIndex() == -1)
-        	data.setClassIndex(0);
+        if (trainSet.classIndex() == -1)
+        	trainSet.setClassIndex(0);
 
         //initialize svm classifier
         LibSVM svm = new LibSVM();
-        svm.buildClassifier(data);
+        svm.buildClassifier(trainSet);
+        
+        J48 tree = new J48();
+    	tree.buildClassifier(trainSet);
+    	
+    	/**************************************************/
+    	
+    	CSVLoader testLoader = new CSVLoader();
+		testLoader.setSource(new File("Corpus/Processed/unknownVectors.txt"));
+		testLoader.getStructure();
+	    Instances testSet = testLoader.getDataSet();
+	    
+	    if (testSet.classIndex() == -1)
+	    	testSet.setClassIndex(0);
         
         weka.core.SerializationHelper.write("svm.model", svm);
-
+        weka.core.SerializationHelper.write("j48.model", tree);
         
+        Evaluation eval = new Evaluation(testSet);
+        eval.crossValidateModel(tree, testSet, 10, new Random(1));
+        System.out.println(eval.toSummaryString("\nResults\n\n", false));
+
         
         // svm.classifyInstance(instance);
 	}
@@ -66,7 +77,8 @@ public class Learner {
 	    
 	    for (int i = 0; i < data.numInstances(); ++i)
 	    {
-	    	System.out.println(svm.classifyInstance(data.instance(i)));
+	    	double prediction = svm.classifyInstance(data.instance(i));
+	    	System.out.println(data.instance(i).stringValue(0) + " -> " + data.classAttribute().value((int) prediction));
 	    }
 	}
 }

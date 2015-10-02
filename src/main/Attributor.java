@@ -40,7 +40,7 @@ public class Attributor {
 			ext.processCorpus(args[2], "Corpus/Processed", Integer.parseInt(args[1]));
 		}
 		
-		if (args[0].equals("LEARN")) {
+		if (args[0].equals("LEARN")) {	
 			Learner l = new Learner();
 			try {
 				l.train(args[1]);
