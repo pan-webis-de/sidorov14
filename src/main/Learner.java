@@ -1,9 +1,16 @@
 package main;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
 
 import corpus.CorpusManager;
 import weka.classifiers.Evaluation;
@@ -54,15 +61,29 @@ public class Learner {
 
         CorpusManager cm = new CorpusManager("Corpus/NEW CORPORA/pan12B/");
         
+        JsonArrayBuilder answerJsonArray = Json.createArrayBuilder();
+        
         for (int i = 0; i < testSet.numInstances(); ++i)
 	    {
 	    	double prediction = svm.classifyInstance(testSet.instance(i));
 	    	String predictedAuthor = trainSet.classAttribute().value((int) prediction);
 	    	String classifiedText = testSet.instance(i).stringValue(0);
+	    	
+	    	JsonObject answerJson = Json.createObjectBuilder()
+	    			.add("unknown-text", classifiedText)
+	    			.add("author", predictedAuthor)
+	    			.add("score", 1.0).build();
+	    	
+	    	answerJsonArray.add(answerJson);
+	    	
 	    	System.out.println(classifiedText + " -> " + predictedAuthor + " (is " + cm.getAuthorTextMapping().get(classifiedText + ".txt") + ")");
 	    }
         
-        // svm.classifyInstance(instance);
+        JsonObject resultJson = Json.createObjectBuilder().add("answers", answerJsonArray.build()).build();
+        
+        JsonWriter resultWriter = Json.createWriter(new FileOutputStream("results.json"));
+        resultWriter.write(resultJson);
+        resultWriter.close();
 	}
 	
 	public void classify(String unknownFile) throws Exception
