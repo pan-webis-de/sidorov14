@@ -43,10 +43,18 @@ public class ExtractionManager {
 				continue;
 			}
 
-			System.out.print("Processing text " + textCount + " of " + corpusManager.getTextCount() + " ... ");
-			processText(currentText, ngramSize, resultFolder, currentTextInstance.getTextSource().getName(),
-					currentTextInstance.getTrueAuthor());
-			System.out.println("Done.");
+			System.out.print("Processing text " + textCount + " of " + corpusManager.getTextCount() + " (" + 
+					currentTextInstance.getTextSource().getAbsolutePath().toString() + ") ... ");
+			try {
+				processText(currentText, ngramSize, resultFolder, currentTextInstance.getTextSource().getName(),
+						currentTextInstance.getTrueAuthor());
+				System.out.println("Done.");
+			}
+			catch (Exception e)
+			{
+				System.err.println(" ERROR: " + e.getMessage());
+				// just continue to next text
+			}
 
 			currentTextInstance = corpusManager.getNextText();
 			++textCount;
@@ -66,8 +74,16 @@ public class ExtractionManager {
 				currentUnknownText = corpusManager.getUnknownText();
 				continue;
 			}
-			processText(unknownText, ngramSize, resultFolder, currentUnknownText.getTextSource().getName(),
-					"UNKNOWN");
+			
+			try {
+				processText(unknownText, ngramSize, resultFolder, currentUnknownText.getTextSource().getName(),
+						"UNKNOWN");
+			}
+			catch (Exception e)
+			{
+				System.err.println(" ERROR: " + e.getMessage());
+				// just continue to next text
+			}
 			currentUnknownText = corpusManager.getUnknownText();
 			++unknownTextCount;
 		}

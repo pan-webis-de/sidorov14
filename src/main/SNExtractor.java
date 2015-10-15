@@ -119,6 +119,10 @@ public class SNExtractor {
 
 			for (IndexedWord leaf : leaves) {
 				List<IndexedWord> path = dependencies.getShortestDirectedPathNodes(root, leaf);
+				if (path == null || path.isEmpty())
+				{
+					continue;
+				}
 				ArrayList<String> currentRelationPath = new ArrayList<String>();
 				currentRelationPath.add("root");
 				for (IndexedWord w : path) {
