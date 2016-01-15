@@ -2,7 +2,7 @@
 
 This is a reimplementation of the approach to authorship attribution originally described in
 
-> G. Sidorov, F. Velasquez, E. Stamatatos, A.F. Gelbukh, and L. Chanona-Hernández. [Syntactic n-grams as machine learning features for natural language processing](http://www.g-sidorov.org/g-sidorov_org/Synt_n_grams_ESWA_FINAL.pdf). Expert Systems with Applications, 41(3):853-860, 2014 [[paper](http://www.g-sidorov.org/g-sidorov_org/Synt_n_grams_ESWA_FINAL.pdf)]
+> Grigori Sidorov, Francisco Velasquez, Efstathios Stamatatos, Alexander Gelbukh, and Liliana Chanona-Hernández. [Syntactic n-grams as machine learning features for natural language processing](http://www.g-sidorov.org/g-sidorov_org/Synt_n_grams_ESWA_FINAL.pdf). Expert Systems with Applications, 41(3):853-860, 2014 [[paper](http://www.g-sidorov.org/g-sidorov_org/Synt_n_grams_ESWA_FINAL.pdf)]
 
 It was reimplemented as part of a science reproducibility study alongside [14 other authorship attribution approaches](https://github.com/search?q="Who+wrote+the+web"+user:pan-webis-de). The results of the reproducibility study can be found in
 
